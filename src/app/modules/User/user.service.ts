@@ -19,6 +19,15 @@ interface UserWithOptionalPassword extends Omit<User, 'password'> {
 
 const registerUserIntoDB = async (payload: User) => {
   const hashedPassword: string = await bcrypt.hash(payload.password, 12);
+
+  const isEmailExists = await prisma.user.findUnique({
+    where: { email: payload?.email },
+  });
+
+  if (isEmailExists) {
+    throw new AppError(httpStatus.CONFLICT, `email already exists`);
+  }
+
   const userData = {
     ...payload,
     password: hashedPassword,
@@ -30,6 +39,7 @@ const registerUserIntoDB = async (payload: User) => {
   });
 
   await resendUserVerificationEmail(newUser.email);
+
   const userWithOptionalPassword = newUser as UserWithOptionalPassword;
   delete userWithOptionalPassword.password;
 
@@ -181,6 +191,7 @@ const resendUserVerificationEmail = async (email: string) => {
     'Email verification link',
     emailVerificationLink,
   );
+
   return user;
 };
 

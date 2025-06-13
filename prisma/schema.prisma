@@ -11,13 +11,15 @@ datasource db {
 }
 
 model User {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  firstName String
-  lastName  String
-  email     String       @unique
-  password  String
-  role      UserRoleEnum @default(USER)
-  status    UserStatus   @default(ACTIVE)
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  firstName  String
+  lastName   String
+  email      String       @unique
+  password   String
+  role       UserRoleEnum @default(USER)
+  status     UserStatus   @default(ACTIVE)
+  books      Book[]
+  bookIssues BookIssue[]
 
   otp       String?
   otpExpiry DateTime?
@@ -30,6 +32,30 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+model Book {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  body          String
+  author        User        @relation(fields: [authorId], references: [id])
+  authorId      String      @db.ObjectId
+  publishedYear Int
+  coverImageUrl String?
+  bookIssues    BookIssue[]
+}
+
+model BookIssue {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  book         Book        @relation(fields: [bookId], references: [id])
+  bookId       String      @db.ObjectId
+  user         User        @relation(fields: [userId], references: [id])
+  userId       String      @db.ObjectId
+  issueDate    DateTime    @default(now())
+  allowedHours Int?        @default(5)
+  returnDate   DateTime?
+  status       IssueStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 enum UserRoleEnum {
@@ -46,4 +72,11 @@ enum UserStatus {
   ACTIVE
   INACTIVE
   BLOCKED
+}
+
+enum IssueStatus {
+  PENDING
+  ISSUED
+  RETURNED
+  RENEWED
 }

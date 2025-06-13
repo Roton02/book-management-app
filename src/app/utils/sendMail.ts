@@ -41,7 +41,7 @@ export const sendEmail = async (to: string, html: string, subject: string) => {
     });
 
     const result = await transporter.sendMail({
-      from: 'devemdad@gmail.com', // sender address
+      from: 'rph645102@gmail.com', // sender address
       to, // list of receivers
       subject, // Subject line
       text: '', // plain text body
@@ -71,7 +71,7 @@ export const sendBulkEmail = async (
     const to = recipients.join(',');
 
     const result = await transporter.sendMail({
-      from: 'devemdad@gmail.com', // sender address
+      from: 'rph645102@gmail.com', // sender address
       to, // list of receivers
       subject, // Subject line
       text: '', // plain text body
@@ -91,7 +91,7 @@ export default class Email {
   constructor(user: any) {
     this.to = user.email || 'admin@gmail.com';
     this.firstName = user.firstName || 'admin';
-    this.from = `WSF <${process.env.EMAIL_FROM}>`;
+    this.from = `WSF <${process.env.EMAIL_FROM || 'rph645102@gmail.com'}>`;
   }
 
   newTransport() {
@@ -110,6 +110,15 @@ export default class Email {
         },
       } as any);
     }
+
+    console.log(` env`, {
+      host: process.env.MAILTRAP_HOST,
+      port: process.env.MAILTRAP_PORT,
+      auth: {
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASSWORD,
+      },
+    });
 
     //Sending dummy emails to mailtrap for development
     return nodemailer.createTransport({
