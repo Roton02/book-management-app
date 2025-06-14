@@ -27,7 +27,7 @@ const auth = (...roles: string[]) => {
         },
       });
 
-      console.log(`User found: ${user}`);
+      // console.log(`User found: ${user}`);
 
       if (!user) {
         throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');

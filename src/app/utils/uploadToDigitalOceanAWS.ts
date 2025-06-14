@@ -29,16 +29,18 @@ export const uploadToDigitalOceanAWS = async (
   file: Express.Multer.File,
 ): Promise<UploadResponse> => {
   try {
-    // Ensure the file exists before uploading
-    await fs.promises.access(file.path, fs.constants.F_OK);
 
-    const fileStream: Readable = fs.createReadStream(file.path);
+    // Ensure the file exists before uploading
+    // await fs.promises.access(file.path, fs.constants.F_OK);
+
+    // const fileStream: Readable = fs.createReadStream(file.path);
+    const fileBody = file.buffer ? file.buffer : fs.createReadStream(file.path);
 
     // Prepare the upload command
     const command = new PutObjectCommand({
       Bucket: `${process.env.DO_SPACE_BUCKET}`,
       Key: `${file.originalname}`,
-      Body: fileStream,
+      Body: fileBody,
       ACL: 'public-read',
       ContentType: file.mimetype,
     });

@@ -3,8 +3,8 @@ import path from 'path';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-export default {   
-  bcrypt_salt_round : process.env.bcrypt_salt_round,
+export default {
+  bcrypt_salt_round: process.env.BCRYPT_SALT_ROUNDS || '10',
   env: process.env.NODE_ENV,
   port: process.env.PORT,
   jwt_secret: process.env.JWT_SECRET,
@@ -20,4 +20,6 @@ export default {
     refresh_secret: process.env.JWT_REFRESH_SECRET,
     refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
   },
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  Stripe_Publishable_key: process.env.STRIPE_PUBLISHED_KEY,
 };

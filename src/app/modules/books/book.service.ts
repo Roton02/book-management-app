@@ -1,19 +1,24 @@
 import { IBook } from '../../interface/types';
 import prisma from '../../utils/prisma';
+import { uploadToDigitalOceanAWS } from '../../utils/uploadToDigitalOceanAWS';
 
-const createBookIntroDB = async (bookData: IBook) => {
+const createBookIntroDB = async (bookData: IBook , image: Express.Multer.File) => {
+  // console.log(bookData, image);
+
   const isUserExist = await prisma.user.findUnique({
     where: {
       id: bookData.authorId, // Assuming authorId is the user ID
     },
   });
-  console.log(isUserExist);
 
   if ((!isUserExist && isUserExist) || isUserExist?.role !== 'SUPERADMIN') {
     throw new Error(
       'User does not exist or is not authorized to create a book',
     );
   }
+  //coverImageUrl
+  const bookImage = await uploadToDigitalOceanAWS(image)
+  bookData.coverImageUrl = bookImage.Location;
 
   const book = await prisma.book.create({
     data: bookData,

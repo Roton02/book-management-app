@@ -3,7 +3,14 @@ import sendResponse from '../../utils/sendResponse';
 import { bookServices } from './book.service';
 
 const createBook = catchAsync(async (req, res) => {
-  const result = await bookServices.createBookIntroDB(req.body);
+  const bookData = JSON.parse(req.body.data);
+  const image = req.file;
+  if (!image) {
+    {
+      throw new Error('Image is required');
+    }
+  }
+  const result = await bookServices.createBookIntroDB(bookData, image);
 
   sendResponse(res, {
     statusCode: 201,
@@ -11,6 +18,7 @@ const createBook = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const getBook = catchAsync(async (req, res) => {
   const result = await bookServices.getBookIntroDb();
   sendResponse(res, {
